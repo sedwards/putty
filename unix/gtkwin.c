@@ -2413,6 +2413,8 @@ static void store_cutbuffer(char * ptr, int len)
 /* Retrieve data from a cut-buffer.
  * Returned data needs to be freed with XFree().
  */
+
+#if 0
 static char *retrieve_cutbuffer(int *nbytes)
 {
 #ifndef NOT_X_WINDOWS
@@ -2428,6 +2430,7 @@ static char *retrieve_cutbuffer(int *nbytes)
     return NULL;
 #endif
 }
+#endif
 
 void write_clip(void *frontend, wchar_t *data, int *attr, int len,
                 int must_deselect)
