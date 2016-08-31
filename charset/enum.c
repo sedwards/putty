@@ -13,7 +13,7 @@
  * lookup table (a static one and a dynamic one).
  */
 
-#define ENUM_CHARSETS
-#include "sbcsdat.c"
-#include "utf8.c"
-#undef ENUM_CHARSETS
+//#define ENUM_CHARSETS
+//#include "sbcsdat.c"
+//#include "utf8.c"
+//#undef ENUM_CHARSETS

@@ -1,0 +1,170 @@
+# Compiler
+CC = gcc
+
+# Use pkg-config to get compiler and linker flags for GTK3 and GLib
+GTK3_CFLAGS = $(shell pkg-config --cflags gtk+-3.0 glib-2.0)
+GTK3_LIBS = $(shell pkg-config --libs gtk+-3.0 glib-2.0)
+
+# Additional libraries
+#LIBS = -lgssapi_krb5 -lcrypto -lssl -lssh
+LIBS =
+
+# Compiler flags
+CFLAGS = -Wall -O2 -D__APPLE__ -DNO_GSSAPI -DNOT_X_WINDOWS $(GTK3_CFLAGS) -Wno-implicit-function-declaration -Wno-int-conversion
+
+# Include directories
+INCLUDES = -I. -Iunix -Icharset
+
+# Output executable names
+TARGET = putty
+PAGENT_TARGET = pagent
+PSFTP_TARGET = psftp
+
+# uxsftp.o
+
+
+# Object files for shared code
+COMMON_OBJS = \
+    be_nos_s.o \
+    be_ssh.o \
+    be_all.o \
+    be_misc.o \
+    be_none.o \
+    callback.o \
+    cmdline.o \
+    conf.o \
+    config.o \
+    cproxy.o \
+    dialog.o \
+    errsock.o \
+    import.o \
+    int64.o \
+    ldisc.o \
+    logging.o \
+    misc.o \
+    minibidi.o \
+    pinger.o \
+    portfwd.o \
+    proxy.o \
+    raw.o \
+    rlogin.o \
+    settings.o \
+    sercfg.o \
+    ssh.o \
+    sshshare.o \
+    sshaes.o \
+    ssharcf.o \
+    sshbcrypt.o \
+    sshblowf.o \
+    sshbn.o \
+    sshccp.o \
+    sshcrc.o \
+    sshcrcda.o \
+    sshrand.o \
+    sshrsag.o \
+    sshdh.o \
+    sshdes.o \
+    sshdss.o \
+    sshecc.o \
+    sshgssc.o \
+    sshpubk.o \
+    sshrsa.o \
+    sshmd5.o \
+    sshsha.o \
+    sshsh256.o \
+    sshsh512.o \
+    sshzlib.o \
+    sshprime.o \
+    terminal.o \
+    telnet.o \
+    timing.o \
+    time.o \
+    tree234.o \
+    version.o \
+    wcwidth.o \
+    wildcard.o \
+    x11fwd.o
+
+# Charset object files
+CHARSET_OBJS = \
+    charset/fromucs.o \
+    charset/localenc.o \
+    charset/macenc.o \
+    charset/mimeenc.o \
+    charset/sbcs.o \
+    charset/slookup.o \
+    charset/toucs.o \
+    charset/utf8.o \
+    charset/xenc.o
+
+   # /Users/sedwards/source/Personal/putty/unix/uxplink.o
+   # /Users/sedwards/source/Personal/putty/unix/uxpsusan.o
+   # /Users/sedwards/source/Personal/putty/unix/uxsftp.o
+
+# Object files specific to putty
+PUTTY_OBJS = \
+    $(COMMON_OBJS) \
+    $(CHARSET_OBJS) \
+    unix/uxagentc.o \
+    unix/gtkask.o \
+    unix/gtkapp.o \
+    unix/gtkcfg.o \
+    unix/gtkcols.o \
+    unix/gtkcomm.o \
+    unix/gtkmisc.o \
+    unix/gtkdlg.o \
+    unix/gtkfont.o \
+    unix/gtkwin.o \
+    unix/ux_x11.o \
+    unix/uxcfg.o \
+    unix/uxgen.o \
+    unix/uxgss.o \
+    unix/uxmisc.o \
+    unix/uxnet.o \
+    unix/uxnoise.o \
+    unix/uxpeer.o \
+    unix/uxprint.o \
+    unix/uxproxy.o \
+    unix/uxpty.o \
+    unix/uxputty.o \
+    unix/uxsel.o \
+    unix/uxshare.o \
+    unix/uxsignal.o \
+    unix/uxstore.o \
+    unix/uxucs.o \
+    unix/uxser.o \
+    unix/x11misc.o \
+    unix/xkeysym.o \
+    unix/xpmpucfg.o \
+    unix/xpmputty.o
+
+# Object files specific to pagent
+PAGENT_OBJS = $(COMMON_OBJS) $(CHARSET_OBJS) pagent.o unix/uxpgnt.o
+
+# Object files specific to psftp
+PSFTP_OBJS = $(COMMON_OBJS) $(CHARSET_OBJS) psftp.o unix/uxsftp.o
+
+# Build rule for putty
+$(TARGET): $(PUTTY_OBJS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(PUTTY_OBJS) $(GTK3_LIBS) $(LIBS)
+
+# Build rule for pagent
+$(PAGENT_TARGET): $(PAGENT_OBJS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(PAGENT_TARGET) $(PAGENT_OBJS) $(GTK3_LIBS) $(LIBS)
+
+# Build rule for psftp
+$(PSFTP_TARGET): $(PSFTP_OBJS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(PSFTP_TARGET) $(PSFTP_OBJS) $(GTK3_LIBS) $(LIBS)
+
+# Compile rules for individual object files
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+# Clean the build
+.PHONY: clean
+clean:
+	rm -f $(CHARSET_OBJS) $(PUTTY_OBJS) $(PAGENT_OBJS) $(PSFTP_OBJS) $(TARGET) $(PAGENT_TARGET) $(PSFTP_TARGET)
+
+# Phony target for building all executables
+all: $(TARGET) $(PAGENT_TARGET) $(PSFTP_TARGET)
+

@@ -33,7 +33,7 @@
 #include "storage.h"
 #include "dialog.h"
 #include "tree234.h"
-#include "licence.h"
+//#include "licence.h"
 
 #if GTK_CHECK_VERSION(2,0,0)
 /* Decide which of GtkFileChooserDialog and GtkFileSelection to use */
@@ -3660,7 +3660,7 @@ static void licence_clicked(GtkButton *button, gpointer data)
 
     title = dupcat(appname, " Licence", NULL);
     assert(aboutbox != NULL);
-    messagebox(aboutbox, title, LICENCE_TEXT("\n\n"),
+    messagebox(aboutbox, title, ("GPL and others\n\n"),
 	       string_width("LONGISH LINE OF TEXT SO THE LICENCE"
 			    " BOX ISN'T EXCESSIVELY TALL AND THIN"),
                TRUE, "OK", 'o', 1, 1, NULL);
@@ -3704,7 +3704,7 @@ void about_box(void *window)
         char *label_text = dupprintf
             ("%s\n\n%s\n\n%s",
              appname, ver,
-             "Copyright " SHORT_COPYRIGHT_DETAILS ". All rights reserved");
+             "Copyright " "SHORT_COPYRIGHT_DETAILS" ". All rights reserved");
         w = gtk_label_new(label_text);
         gtk_label_set_justify(GTK_LABEL(w), GTK_JUSTIFY_CENTER);
 #if GTK_CHECK_VERSION(2,0,0)

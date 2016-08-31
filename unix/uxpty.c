@@ -36,6 +36,7 @@
 #define TRUE 1
 #endif
 
+#ifndef __APPLE__
 /* updwtmpx() needs the name of the wtmp file.  Try to find it. */
 #ifndef WTMPX_FILE
 #ifdef _PATH_WTMPX
@@ -52,6 +53,41 @@
 #define LASTLOG_FILE "/var/log/lastlog"
 #endif
 #endif
+#endif
+
+#ifdef __APPLE__
+#include <stdio.h>
+#include <unistd.h>
+#include <errno.h>
+
+#define WTMPX_FILE "/private/var/log/wtmpx"
+
+int setresgid(gid_t rgid, gid_t egid, gid_t sgid) {
+    if (setgid(egid) != 0) {
+        return -1; // set effective gid
+    }
+    if (setregid(rgid, egid) != 0) {
+        return -1; // set real and effective gid
+    }
+    return 0;
+}
+
+int setresuid(uid_t ruid, uid_t euid, uid_t suid) {
+    if (setuid(euid) != 0) {
+        return -1; // set effective uid
+    }
+    if (setreuid(ruid, euid) != 0) {
+        return -1; // set real and effective uid
+    }
+    return 0;
+}
+
+void updwtmpx(const char *filename, const struct utmpx *ut) {
+    // Stub function; you can implement logging here or use utmp
+    // structures for your application needs.
+    // Example: Write the ut struct to a log file if needed.
+}
+#endif /* __APPLE__ */
 
 /*
  * Set up a default for vaguely sane systems. The idea is that if

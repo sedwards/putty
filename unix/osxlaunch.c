@@ -406,7 +406,7 @@ int main(int argc, char **argv)
     new_argv[j++] = prefix;
     new_argv[j++] = NULL;
 
-    execv(realbin, new_argv);
+    execv("PuTTY-bin", argv);
     perror("execv");
     return 127;
 }

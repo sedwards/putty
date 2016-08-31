@@ -7,6 +7,8 @@
  * it's fully working.)
  */
 
+const char *const appname = "Putty";
+
 /*
 
 To build on OS X, you will need a build environment with GTK 3 and
