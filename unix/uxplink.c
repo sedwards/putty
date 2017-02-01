@@ -594,7 +594,9 @@ static void usage(void)
 
 static void version(void)
 {
-    printf("plink: %s\n", ver);
+    char *buildinfo_text = buildinfo("\n");
+    printf("plink: %s\n%s\n", ver, buildinfo_text);
+    sfree(buildinfo_text);
     exit(1);
 }
 
@@ -1121,6 +1123,9 @@ int main(int argc, char **argv)
         } else {
             ret = select(maxfd, &rset, &wset, &xset, NULL);
         }
+
+        if (ret < 0 && errno == EINTR)
+            continue;
 
 	if (ret < 0) {
 	    perror("select");

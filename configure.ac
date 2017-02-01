@@ -7,7 +7,7 @@
 # Version number is substituted by Buildscr for releases, snapshots
 # and custom builds out of svn; X.XX shows up in ad-hoc developer
 # builds, which shouldn't matter
-AC_INIT(putty, X.XX)
+AC_INIT(putty, 0.67-2017-01-31.9c3700a)
 AC_CONFIG_FILES([Makefile])
 AC_CONFIG_HEADERS([uxconfig.h:uxconfig.in])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
@@ -41,6 +41,18 @@ AS_IF([test "x$setidtype" = "xsetgid"],
       [SETID_CMD="chgrp $setidval"; SETID_MODE="2755"])
 AC_SUBST(SETID_CMD)
 AC_SUBST(SETID_MODE)
+
+AC_ARG_ENABLE([git-commit],
+  [AS_HELP_STRING([--disable-git-commit],
+                  [disable embedding current git HEAD in binaries])],
+  [],
+  [if test -d "$srcdir/.git"; then
+    enable_git_commit=yes; else enable_git_commit=no; fi])
+
+if test "x$enable_git_commit" = "xyes" -a ! -d "$srcdir/.git"; then
+  AC_ERROR([Cannot --enable-git-commit when source tree is not a git checkout])
+fi
+AM_CONDITIONAL(AUTO_GIT_COMMIT, [test "x$enable_git_commit" = "xyes"])
 
 AC_ARG_WITH([gssapi],
   [AS_HELP_STRING([--without-gssapi],

@@ -11,6 +11,7 @@
 #include <dlfcn.h>		       /* Dynamic library loading */
 #endif /*  NO_LIBDL */
 #include "charset.h"
+#include <sys/types.h>         /* for mode_t */
 
 #ifdef OSX_GTK
 /*
@@ -29,6 +30,17 @@
 #define META_MANUAL_MASK (GDK_MOD1_MASK)
 #define JUST_USE_GTK_CLIPBOARD_UTF8 /* low-level gdk_selection_* fails */
 #define DEFAULT_CLIPBOARD GDK_SELECTION_CLIPBOARD /* OS X has no PRIMARY */
+
+#define BUILDINFO_PLATFORM "OS X (GTK)"
+
+#elif defined NOT_X_WINDOWS
+
+#define BUILDINFO_PLATFORM "Unix (pure GTK)"
+
+#else
+
+#define BUILDINFO_PLATFORM "Unix (GTK + X11)"
+
 #endif
 
 struct Filename {
@@ -197,6 +209,7 @@ void noncloexec(int);
 int nonblock(int);
 int no_nonblock(int);
 char *make_dir_and_check_ours(const char *dirname);
+char *make_dir_path(const char *path, mode_t mode);
 
 /*
  * Exports from unicode.c.
