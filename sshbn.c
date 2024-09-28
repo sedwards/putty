@@ -22,6 +22,16 @@ BignumInt bnZero[1] = { 0 };
 BignumInt bnOne[2] = { 1, 1 };
 BignumInt bnTen[2] = { 1, 10 };
 
+Bignum modmul(Bignum p, Bignum q, Bignum mod);
+void bignum_set_bit(Bignum bn, int bitnum, int value);
+Bignum bigmul(Bignum a, Bignum b);
+Bignum bigadd(Bignum a, Bignum b);
+Bignum bigsub(Bignum a, Bignum b);
+Bignum bignum_from_long(unsigned long n);
+Bignum bigmod(Bignum a, Bignum b);
+Bignum modinv(Bignum number, Bignum modulus);
+
+
 /*
  * The Bignum format is an array of `BignumInt'. The first
  * element of the array counts the remaining elements. The

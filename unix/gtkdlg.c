@@ -30,7 +30,7 @@
 #include "storage.h"
 #include "dialog.h"
 #include "tree234.h"
-#include "licence.h"
+//#include "licence.h"
 
 #if GTK_CHECK_VERSION(2,0,0)
 /* Decide which of GtkFileChooserDialog and GtkFileSelection to use */
@@ -3684,10 +3684,10 @@ static void licence_clicked(GtkButton *button, gpointer data)
 
     title = dupcat(appname, " Licence");
     assert(aboutbox != NULL);
-    create_message_box(aboutbox, title, LICENCE_TEXT("\n\n"),
-                       string_width("LONGISH LINE OF TEXT SO THE LICENCE"
-                                    " BOX ISN'T EXCESSIVELY TALL AND THIN"),
-                       true, &buttons_ok, trivial_post_dialog_fn, NULL);
+   // create_message_box(aboutbox, title, LICENCE_TEXT("\n\n"),
+     //                  string_width("LONGISH LINE OF TEXT SO THE LICENCE"
+       //                             " BOX ISN'T EXCESSIVELY TALL AND THIN"),
+         //              true, &buttons_ok, trivial_post_dialog_fn, NULL);
     sfree(title);
 }
 
@@ -3726,10 +3726,11 @@ void about_box(void *window)
 
     {
         char *buildinfo_text = buildinfo("\n");
-        char *label_text = dupprintf
-            ("%s\n\n%s\n\n%s\n\n%s",
-             appname, ver, buildinfo_text,
-             "Copyright " SHORT_COPYRIGHT_DETAILS ". All rights reserved");
+        char *label_text = "nfr";
+      //  char *label_text = dupprintf
+        //    ("%s\n\n%s\n\n%s\n\n%s",
+          //   appname, ver, buildinfo_text,
+   //          "Copyright " SHORT_COPYRIGHT_DETAILS ". All rights reserved");
         w = gtk_label_new(label_text);
         gtk_label_set_justify(GTK_LABEL(w), GTK_JUSTIFY_CENTER);
 #if GTK_CHECK_VERSION(2,0,0)

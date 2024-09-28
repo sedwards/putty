@@ -6,7 +6,7 @@ GTK3_CFLAGS = $(shell pkg-config --cflags gtk+-3.0 glib-2.0)
 GTK3_LIBS = $(shell pkg-config --libs gtk+-3.0 glib-2.0)
 
 # Compiler flags
-CFLAGS = -Wall -O2 $(GTK3_CFLAGS)
+CFLAGS = -Wall -O2 -D__APPLE__ -DNOT_X_WINDOWS $(GTK3_CFLAGS) -Wno-implicit-function-declaration -Wno-int-conversion
 
 # Include directories
 INCLUDES = -I. -Iunix -Icharset
@@ -14,12 +14,17 @@ INCLUDES = -I. -Iunix -Icharset
 # Output executable name
 TARGET = putty
 
+# sftp and others are seperate commands
+#SFTP_OBJS = sftp.o
+#PSFTP_OBJS = psftp.o
+#pscp.o#
+# wildcard.o
+
 # Object files (adding the .c files from the unix folder)
-OBJS = be_none.o config.o import.o int64.o misc.o noshare.o proxy.o \
-       pscp.o rlogin.o sshbcrypt.o sshdss.o sshpubk.o telnet.o \
+OBJS = be_none.o conf.o config.o import.o int64.o marshal.o misc.o noshare.o proxy.o \
+       rlogin.o sshbcrypt.o sshdss.o sshpubk.o telnet.o \
        version.o dialog.o ldisc.o pageant.o psftp.o sftp.o \
-       ssh.o sshbn.o sshgss.o sshsha.o terminal.o unix.o x11fwd.o \
-       wildcard.o \
+       ssh.o sshbn.o sshsha.o sshgssc.o sshrsa.o terminal.o x11fwd.o \
        unix/gtkapp.o unix/gtkask.o unix/gtkcfg.o unix/gtkcols.o \
        unix/gtkcomm.o unix/gtkmisc.o unix/gtkdlg.o unix/gtkfont.o \
        unix/gtkwin.o unix/osxlaunch.o unix/ux_x11.o unix/uxagentc.o \
