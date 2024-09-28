@@ -1,0 +1,49 @@
+# Compiler
+CC = gcc
+
+# Use pkg-config to get compiler and linker flags for GTK3 and GLib
+GTK3_CFLAGS = $(shell pkg-config --cflags gtk+-3.0 glib-2.0)
+GTK3_LIBS = $(shell pkg-config --libs gtk+-3.0 glib-2.0)
+
+# Compiler flags
+CFLAGS = -Wall -O2 $(GTK3_CFLAGS)
+
+# Include directories
+INCLUDES = -I. -Iunix -Icharset
+
+# Output executable name
+TARGET = putty
+
+# Object files (adding the .c files from the unix folder)
+OBJS = be_none.o config.o import.o int64.o misc.o noshare.o proxy.o \
+       pscp.o rlogin.o sshbcrypt.o sshdss.o sshpubk.o telnet.o \
+       version.o dialog.o ldisc.o pageant.o psftp.o sftp.o \
+       ssh.o sshbn.o sshgss.o sshsha.o terminal.o unix.o x11fwd.o \
+       wildcard.o \
+       unix/gtkapp.o unix/gtkask.o unix/gtkcfg.o unix/gtkcols.o \
+       unix/gtkcomm.o unix/gtkmisc.o unix/gtkdlg.o unix/gtkfont.o \
+       unix/gtkwin.o unix/osxlaunch.o unix/ux_x11.o unix/uxagentc.o \
+       unix/uxcfg.o unix/uxcons.o unix/uxgen.o unix/uxgss.o unix/uxmisc.o \
+       unix/uxnet.o unix/uxnoise.o unix/uxpeer.o unix/uxpgnt.o unix/uxplink.o \
+       unix/uxprint.o unix/uxpty.o unix/uxputty.o unix/uxsel.o unix/uxsftp.o \
+       unix/uxshare.o unix/uxsignal.o unix/uxstore.o unix/uxucs.o unix/x11misc.o \
+       unix/xkeysym.o unix/xpmptcfg.o unix/xpmpterm.o unix/xpmpucfg.o unix/xpmputty.o
+
+# Build rule for the target
+$(TARGET): $(OBJS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(OBJS) $(GTK3_LIBS)
+
+# Compile rules for individual object files
+%.o: %.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+# Clean the build
+.PHONY: clean
+clean:
+	rm -f $(OBJS) $(TARGET)
+
+# Phony target for building the PuTTY components
+all: $(TARGET)
+
+# Other source-specific rules (if needed)
+
