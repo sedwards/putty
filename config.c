@@ -695,6 +695,7 @@ static void sessionsaver_handler(union control *ctrl, dlgparam *dlg,
                 dlg_listbox_add(ctrl, dlg, ssd->sesslist.sessions[i]);
             dlg_update_done(ctrl, dlg);
         }
+
     } else if (event == EVENT_VALCHANGE) {
         int top, bottom, halfway, i;
         if (ctrl == ssd->editbox) {
@@ -716,6 +717,7 @@ static void sessionsaver_handler(union control *ctrl, dlgparam *dlg,
             }
             dlg_listbox_select(ssd->listbox, dlg, top);
         }
+
     } else if (event == EVENT_ACTION) {
         bool mbl = false;
         if (!ssd->midsession &&
@@ -773,6 +775,7 @@ static void sessionsaver_handler(union control *ctrl, dlgparam *dlg,
                 dlg_end(dlg, 1);
                 return;
             }
+#if 0
             /*
              * Annoying special case. If the `Open' button is
              * pressed while no host name is currently set, _and_
@@ -799,7 +802,7 @@ static void sessionsaver_handler(union control *ctrl, dlgparam *dlg,
                 conf_free(conf2);
                 return;
             }
-
+#endif
             /*
              * Otherwise, do the normal thing: if we have a valid
              * session, get going.

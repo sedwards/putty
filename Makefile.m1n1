@@ -7,10 +7,10 @@ GTK3_LIBS = $(shell pkg-config --libs gtk+-3.0 glib-2.0)
 
 # Additional libraries
 #LIBS = -lgssapi_krb5 -lcrypto -lssl -lssh
-LIBS = -lgssapi_krb5
+LIBS =
 
 # Compiler flags
-CFLAGS = -Wall -O2 -D__APPLE__ -DNOT_X_WINDOWS $(GTK3_CFLAGS) -Wno-implicit-function-declaration -Wno-int-conversion
+CFLAGS = -Wall -O2 -D__APPLE__ -DNO_GSSAPI -DNOT_X_WINDOWS $(GTK3_CFLAGS) -Wno-implicit-function-declaration -Wno-int-conversion
 
 # Include directories
 INCLUDES = -I. -Iunix -Icharset
@@ -20,8 +20,12 @@ TARGET = putty
 PAGENT_TARGET = pagent
 PSFTP_TARGET = psftp
 
+# uxsftp.o
+
+
 # Object files for shared code
 COMMON_OBJS = \
+    be_misc.o \
     be_none.o \
     callback.o \
     cmdline.o \
@@ -30,53 +34,88 @@ COMMON_OBJS = \
     cproxy.o \
     dialog.o \
     ecc.o \
+    errsock.o \
     import.o \
     int64.o \
     ldisc.o \
     logging.o \
+    mainchan.o \
     marshal.o \
     memory.o \
     mpint.o \
+    mpunsafe.o \
     misc.o \
-    norand.o \
-    noshare.o \
+    millerrabin.o \
+    minibidi.o \
+    nullplug.o \
+    pinger.o \
+    pockle.o \
+    portfwd.o \
+    primecandidate.o \
     proxy.o \
     rlogin.o \
+    scpserver.o \
     settings.o \
-    sshbcrypt.o \
-    sshbn.o \
+    sesschan.o \
+    sessprep.o \
+    sftpcommon.o \
+    sftpserver.o \
     ssh.o \
-    ssh2censor.o \
-    sshcommon.o \
-    sshserver.o \
-    ssharcf.o \
-    sshecc.o \
-    sshdh.o \
     sshaes.o \
+    ssharcf.o \
+    sshauxcrypt.o \
+    sshbcrypt.o \
+    sshblowf.o \
+    sshbn.o \
+    sshccp.o \
+    sshcrc.o \
+    sshcrcda.o \
+    sshrand.o \
+    sshmac.o \
+    ssh1bpp.o \
+    ssh1censor.o \
+    ssh1connection.o \
+    ssh1connection-client.o \
+    ssh1login.o \
+    ssh2bpp.o \
+    ssh2bpp-bare.o \
+    ssh2censor.o \
+    ssh2connection.o \
+    ssh2connection-client.o \
+    ssh2kex-client.o \
+    ssh2transhk.o \
+    ssh2transport.o \
+    ssh2userauth.o \
+    sshcommon.o \
+    sshshare.o \
+    sshrsag.o \
+    sshdh.o \
+    sshdes.o \
     sshdss.o \
+    sshecc.o \
     sshgssc.o \
     sshhmac.o \
-    sshpubk.o \
     sshprng.o \
+    sshpubk.o \
+    sshrsa.o \
+    sshmd5.o \
     sshsha.o \
     sshsh256.o \
     sshsh512.o \
     sshutils.o \
-    sshzlib.o \
-    ssh2transhk.o \
-    ssh2bpp-bare.o \
-    ssh2userauth.o \
     sshverstring.o \
-    ssh2kex-client.o \
-    ssh2kex-server.o \
-    sshauxcrypt.o \
-    ssh2transport.o \
+    sshzlib.o \
+    sshprime.o \
+    smallprimes.o \
     stripctrl.o \
     terminal.o \
     telnet.o \
     timing.o \
+    time.o \
     tree234.o \
     utils.o \
+    version.o \
+    wcwidth.o \
     wildcard.o \
     x11fwd.o
 
@@ -92,6 +131,10 @@ CHARSET_OBJS = \
     charset/utf8.o \
     charset/xenc.o
 
+   # /Users/sedwards/source/Personal/putty/unix/uxplink.o
+   # /Users/sedwards/source/Personal/putty/unix/uxpsusan.o
+   # /Users/sedwards/source/Personal/putty/unix/uxsftp.o
+
 # Object files specific to putty
 PUTTY_OBJS = \
     $(COMMON_OBJS) \
@@ -105,36 +148,34 @@ PUTTY_OBJS = \
     unix/gtkdlg.o \
     unix/gtkfont.o \
     unix/gtkwin.o \
-    unix/osxlaunch.o \
+    unix/ux_x11.o \
     unix/uxagentc.o \
+    unix/uxagentsock.o \
     unix/uxcfg.o \
-    unix/uxcons.o \
+    unix/uxfdsock.o \
     unix/uxgen.o \
     unix/uxgss.o \
     unix/uxmisc.o \
     unix/uxnet.o \
     unix/uxnoise.o \
     unix/uxpeer.o \
-    unix/uxplink.o \
     unix/uxpoll.o \
     unix/uxprint.o \
+    unix/uxproxy.o \
     unix/uxpty.o \
     unix/uxputty.o \
     unix/uxsel.o \
-    unix/uxsftp.o \
     unix/uxsftpserver.o \
     unix/uxshare.o \
     unix/uxsignal.o \
     unix/uxstore.o \
+    unix/uxutils.o \
     unix/uxucs.o \
-    unix/uxpsusan.o \
     unix/x11misc.o \
     unix/xkeysym.o \
-    unix/xpmptcfg.o \
-    unix/xpmpterm.o \
     unix/xpmpucfg.o \
-    unix/xpmputty.o
-
+    unix/xpmputty.o \
+    unix/procnet.o
 
 # Object files specific to pagent
 PAGENT_OBJS = $(COMMON_OBJS) $(CHARSET_OBJS) pagent.o unix/uxpgnt.o
