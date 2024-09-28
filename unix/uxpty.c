@@ -32,21 +32,74 @@
 #include <utmpx.h>
 #endif
 
+#include <unistd.h>
+
+#include <unistd.h>
+#include <errno.h>
+
+#ifdef __APPLE__
+// Stub for setresgid on macOS
+int setresgid(gid_t rgid, gid_t egid, gid_t sgid) {
+    // macOS equivalent: setgid only changes real and effective GID, no saved GID.
+    if (setegid(egid) == -1 || setgid(rgid) == -1) {
+        return -1;
+    }
+    // Saved GID not supported on macOS
+    return 0;
+}
+
+// Stub for setresuid on macOS
+int setresuid(uid_t ruid, uid_t euid, uid_t suid) {
+    // macOS equivalent: setuid/seteuid only change real and effective UID
+    if (seteuid(euid) == -1 || setuid(ruid) == -1) {
+        return -1;
+    }
+    // Saved UID not supported on macOS
+    return 0;
+}
+
+// Stub for updwtmpx on macOS
+void updwtmpx(const char *wtmpx_file, const struct utmpx *ut) {
+    // macOS does not have wtmpx file handling by default
+    // Simply create a no-op stub, as macOS does not use this.
+    // You could log this call or simulate behavior if necessary.
+}
+#endif /* __APPLE__ */
+
 /* updwtmpx() needs the name of the wtmp file.  Try to find it. */
 #ifndef WTMPX_FILE
-#ifdef _PATH_WTMPX
-#define WTMPX_FILE _PATH_WTMPX
-#else
-#define WTMPX_FILE "/var/log/wtmpx"
-#endif
-#endif
+ #ifdef __APPLE__
+  #define WTMPX_FILE "/private/var/tmp/wtmpx"
+  #define _PATH_WTMPX WTMPX_FILE
+ #endif
+ #ifdef _PATH_WTMPX
+  #define WTMPX_FILE _PATH_WTMPX
+ #else 
+  #ifdef __APPLE__
+   #define WTMPX_FILE _PATH_WTMPX
+  #else
+   #define WTMPX_FILE "/var/log/wtmpx"
+  #endif /* __APPLE__ */
+ #endif /* _PATH_WTMPX */
+#endif /* WTMPX_FILE */
 
 #ifndef LASTLOG_FILE
-#ifdef _PATH_LASTLOG
-#define LASTLOG_FILE _PATH_LASTLOG
-#else
-#define LASTLOG_FILE "/var/log/lastlog"
-#endif
+ #ifdef __APPLE__
+  /* We should move this somewhere under .local if the Free Desktop Spec includes anything about local logging */
+  #define LASTLOG_FILE "/private/var/tmp/lastlog"
+ #endif
+ #ifdef _PATH_LASTLOG
+  #define LASTLOG_FILE _PATH_LASTLOG
+ #else
+  #define LASTLOG_FILE "/var/log/lastlog"
+ #endif /* _PATH_LASTLOG */
+#endif /* LASTLOG_FILE */
+
+#ifdef __APPLE__
+  #define WTMPX_FILE "/private/var/tmp/wtmpx"
+  #define WTMPX_FILE _PATH_WTMPX
+  #define LASTLOG_FILE "/private/var/tmp/lastlog"
+  #define LASTLOG_FILE _PATH_LASTLOG
 #endif
 
 /*
@@ -235,7 +288,16 @@ static void setup_utmp(char *ttyname, char *location)
     pututxline(&utmp_entry);
     endutxent();
 
+#ifdef __APPLE__
+  #undef WTMPX_FILE
+    #define WTMPX_FILE "/private/var/tmp/wtmpx"
     updwtmpx(WTMPX_FILE, &utmp_entry);
+     // #define WTMPX_FILE _PATH_WTMPX
+    #define LASTLOG_FILE "/private/var/tmp/lastlog"
+    #define LASTLOG_FILE _PATH_LASTLOG
+#else /* __APPLE__ */
+    updwtmpx(WTMPX_FILE, &utmp_entry);
+#endif /* __APPLE__ */
 
 #ifdef HAVE_LASTLOG
     memset(&lastlog_entry, 0, sizeof(lastlog_entry));
@@ -266,11 +328,11 @@ static void cleanup_utmp(void)
     utmp_entry.ut_tv.tv_sec = tv.tv_sec;
     utmp_entry.ut_tv.tv_usec = tv.tv_usec;
 
-    updwtmpx(WTMPX_FILE, &utmp_entry);
-
+#ifndef __APPLE__ 
+    wupdwtmpx(WTMPX_FILE, &utmp_entry);
+#endif
     memset(utmp_entry.ut_line, 0, lenof(utmp_entry.ut_line));
     utmp_entry.ut_tv.tv_sec = 0;
-    utmp_entry.ut_tv.tv_usec = 0;
 
     setutxent();
     pututxline(&utmp_entry);
@@ -390,12 +452,14 @@ static void pty_open_master(Pty *pty)
         exit(1);
     }
 #else
+ #ifndef __APPLE__
     pty->master_fd = open("/dev/ptmx", flags);
 
     if (pty->master_fd < 0) {
         perror("/dev/ptmx: open");
         exit(1);
     }
+ #endif
 #endif
 
     if (grantpt(pty->master_fd) < 0) {

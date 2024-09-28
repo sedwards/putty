@@ -173,3 +173,9 @@ void ssh_gss_cleanup(struct ssh_gss_liblist *list)
 #endif /* NO_LIBDL */
 
 #endif /* NO_GSSAPI */
+
+static void gss_init(struct ssh_gss_library *lib, void *dlhandle,
+                     int id, const char *msg)
+{
+}
+

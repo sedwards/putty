@@ -109,6 +109,17 @@ int cmdline_get_passwd_input(prompts_t *p)
     return 1;
 }
 
+void cmdline_error(const char *p, ...)
+{       
+    va_list ap;
+    fprintf(stderr, "%s: ", appname);
+    va_start(ap, p);
+    vfprintf(stderr, p, ap);
+    va_end(ap);
+    fputc('\n', stderr);
+    exit(1);
+}   
+
 static bool cmdline_check_unavailable(int flag, const char *p)
 {
     if (cmdline_tooltype & flag) {

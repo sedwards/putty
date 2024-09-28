@@ -4851,9 +4851,12 @@ static void change_font_size(GtkFrontend *inst, int increment)
         }
     }
 
+#ifndef __APPLE__
     errmsg = setup_fonts_ucs(inst);
     if (errmsg)
+#else
         goto cleanup;
+#endif
 
     /* Success, so suppress putting everything back */
     for (i = 0; i < lenof(newfonts); i++) {
@@ -5221,27 +5224,6 @@ void new_session_window(Conf *conf, const char *geometry_string)
     inst->termwin.vt = &gtk_termwin_vt;
     inst->seat.vt = &gtk_seat_vt;
     inst->logpolicy.vt = &gtk_logpolicy_vt;
-
-#ifndef NOT_X_WINDOWS
-    inst->disp = get_x11_display();
-    if (geometry_string) {
-        int flags, x, y;
-        unsigned int w, h;
-        flags = XParseGeometry(geometry_string, &x, &y, &w, &h);
-        if (flags & WidthValue)
-            conf_set_int(conf, CONF_width, w);
-        if (flags & HeightValue)
-            conf_set_int(conf, CONF_height, h);
-
-        if (flags & (XValue | YValue)) {
-            inst->xpos = x;
-            inst->ypos = y;
-            inst->gotpos = true;
-            inst->gravity = ((flags & XNegative ? 1 : 0) |
-                             (flags & YNegative ? 2 : 0));
-        }
-    }
-#endif
 
     if (!compound_text_atom)
         compound_text_atom = gdk_atom_intern("COMPOUND_TEXT", false);

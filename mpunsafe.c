@@ -18,7 +18,9 @@
  * (Only _client_ connections, however. Uppity, being a test server
  * only, is exempt.)
  */
+#ifndef __APPLE__
 const int deliberate_symbol_clash = 12345;
+#endif
 
 static size_t mp_unsafe_words_needed(mp_int *x)
 {

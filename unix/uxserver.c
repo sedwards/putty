@@ -43,7 +43,7 @@
 #include "ssh.h"
 #include "sshserver.h"
 
-const char *const appname = "uppity";
+//const char *const appname = "uppity";
 
 void modalfatalbox(const char *p, ...)
 {

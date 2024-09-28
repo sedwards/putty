@@ -5,15 +5,15 @@
 #include "charset.h"
 #include "internal.h"
 
-#define ENUM_CHARSET(x) extern charset_spec const charset_##x;
-#include "enum.c"
-#undef ENUM_CHARSET
+//#define ENUM_CHARSET(x) extern charset_spec const charset_##x;
+//#include "enum.c"
+//#undef ENUM_CHARSET
 
 static charset_spec const *const cs_table[] = {
 
-#define ENUM_CHARSET(x) &charset_##x,
-#include "enum.c"
-#undef ENUM_CHARSET
+//#define ENUM_CHARSET(x) &charset_##x,
+//#include "enum.c"
+//#undef ENUM_CHARSET
 
 };
 

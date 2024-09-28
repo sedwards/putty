@@ -183,7 +183,9 @@ bool ssh1_handle_direction_specific_packet(
                  * message boundaries, and passing each individual
                  * message to the one-off agent_query().
                  */
+#ifndef __APPLE__
                 c->chan = agentf_new(&c->sc);
+#endif
             }
 
             pktout = ssh_bpp_new_pktout(

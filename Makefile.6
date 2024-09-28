@@ -5,12 +5,8 @@ CC = gcc
 GTK3_CFLAGS = $(shell pkg-config --cflags gtk+-3.0 glib-2.0)
 GTK3_LIBS = $(shell pkg-config --libs gtk+-3.0 glib-2.0)
 
-# Additional libraries
-#LIBS = -lgssapi_krb5 -lcrypto -lssl -lssh
-LIBS = -lgssapi_krb5
-
 # Compiler flags
-CFLAGS = -Wall -O2 -D__APPLE__ -DNOT_X_WINDOWS $(GTK3_CFLAGS) -Wno-implicit-function-declaration -Wno-int-conversion
+CFLAGS = -Wall -O2 -D__APPLE__ -DNOT_X_WINDOWS $(GTK3_CFLAGS) -Wno-implicit-function-declaration -Wno-int-conversion 
 
 # Include directories
 INCLUDES = -I. -Iunix -Icharset
@@ -20,96 +16,48 @@ TARGET = putty
 PAGENT_TARGET = pagent
 PSFTP_TARGET = psftp
 
-# uxsftp.o
-
-
 # Object files for shared code
 COMMON_OBJS = \
-    be_misc.o \
     be_none.o \
     callback.o \
     cmdline.o \
     conf.o \
     config.o \
-    cproxy.o \
     dialog.o \
     ecc.o \
     import.o \
     int64.o \
-    ldisc.o \
     logging.o \
     marshal.o \
     memory.o \
     mpint.o \
-    mpunsafe.o \
     misc.o \
-    millerrabin.o \
     norand.o \
     noshare.o \
-    nullplug.o \
-    pinger.o \
-    pockle.o \
-    portfwd.o \
-    primecandidate.o \
     proxy.o \
     rlogin.o \
     settings.o \
-    sesschan.o \
-    sftp.o \
-    sftpcommon.o \
-    sshaes.o \
-    ssharcf.o \
-    sshauxcrypt.o \
     sshbcrypt.o \
-    sshblowf.o \
     sshbn.o \
     ssh.o \
-    sshccp.o \
-    sshmac.o \
-    ssh1connection.o \
-    ssh1connection-server.o \
-    ssh2bpp.o \
-    ssh2bpp-bare.o \
-    ssh2censor.o \
-    ssh2connection.o \
-    ssh2connection-client.o \
-    ssh2connection-server.o \
-    ssh2kex-client.o \
-    ssh2kex-server.o \
-    ssh2transport.o \
-    ssh2transhk.o \
-    ssh2userauth.o \
-    ssh2userauth-server.o \
     sshcommon.o \
-    sshshare.o \
-    sshdh.o \
-    sshdes.o \
-    sshdss.o \
+    sshserver.o \
     sshecc.o \
+    sshdss.o \
     sshgssc.o \
     sshhmac.o \
-    sshprng.o \
     sshpubk.o \
-    sshrsa.o \
-    sshmd5.o \
-    sshserver.o \
+    sshprng.o \
     sshsha.o \
-    sshsh256.o \
     sshsh512.o \
     sshutils.o \
-    sshverstring.o \
-    sshzlib.o \
-    sshprime.o \
-    sshrand.o \
-    smallprimes.o \
-    stripctrl.o \
+    ssh2bpp-bare.o \
+    ssh2userauth.o \
     terminal.o \
     telnet.o \
     timing.o \
     tree234.o \
     utils.o \
-    wcwidth.o \
-    wildcard.o \
     x11fwd.o
 
 # Charset object files
@@ -153,22 +101,17 @@ PUTTY_OBJS = \
     unix/uxpty.o \
     unix/uxputty.o \
     unix/uxsel.o \
-    unix/uxsftpserver.o \
+    unix/uxsftp.o \
     unix/uxshare.o \
     unix/uxsignal.o \
     unix/uxstore.o \
-    unix/uxutils.o \
     unix/uxucs.o \
-    unix/uxpsusan.o \
-    unix/uxcliloop.o \
     unix/x11misc.o \
     unix/xkeysym.o \
     unix/xpmptcfg.o \
     unix/xpmpterm.o \
     unix/xpmpucfg.o \
-    unix/xpmputty.o \
-    unix/uxsftp.o
-
+    unix/xpmputty.o
 
 # Object files specific to pagent
 PAGENT_OBJS = $(COMMON_OBJS) $(CHARSET_OBJS) pagent.o unix/uxpgnt.o
@@ -178,15 +121,15 @@ PSFTP_OBJS = $(COMMON_OBJS) $(CHARSET_OBJS) psftp.o unix/uxsftp.o
 
 # Build rule for putty
 $(TARGET): $(PUTTY_OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(PUTTY_OBJS) $(GTK3_LIBS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(TARGET) $(PUTTY_OBJS) $(GTK3_LIBS)
 
 # Build rule for pagent
 $(PAGENT_TARGET): $(PAGENT_OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(PAGENT_TARGET) $(PAGENT_OBJS) $(GTK3_LIBS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(PAGENT_TARGET) $(PAGENT_OBJS) $(GTK3_LIBS)
 
 # Build rule for psftp
 $(PSFTP_TARGET): $(PSFTP_OBJS)
-	$(CC) $(CFLAGS) $(INCLUDES) -o $(PSFTP_TARGET) $(PSFTP_OBJS) $(GTK3_LIBS) $(LIBS)
+	$(CC) $(CFLAGS) $(INCLUDES) -o $(PSFTP_TARGET) $(PSFTP_OBJS) $(GTK3_LIBS)
 
 # Compile rules for individual object files
 %.o: %.c

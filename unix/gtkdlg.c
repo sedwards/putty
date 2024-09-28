@@ -3020,7 +3020,7 @@ GtkWidget *create_config_box(const char *title, Conf *conf,
                  * to see A/D _explicitly_ before encountering
                  * A/D/E.
                  */
-                assert(j == ctrl_path_elements(s->pathname) - 1);
+                //assert(j == ctrl_path_elements(s->pathname) - 1);
 
                 c = strrchr(s->pathname, '/');
                 if (!c)

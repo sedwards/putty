@@ -983,7 +983,9 @@ extern const ssh_hashalg ssh_sha3_224;
 extern const ssh_hashalg ssh_sha3_256;
 extern const ssh_hashalg ssh_sha3_384;
 extern const ssh_hashalg ssh_sha3_512;
+#ifndef __APPLE__
 extern const ssh_hashalg ssh_shake256_114bytes;
+#endif
 extern const ssh_kexes ssh_diffiehellman_group1;
 extern const ssh_kexes ssh_diffiehellman_group14;
 extern const ssh_kexes ssh_diffiehellman_gex;

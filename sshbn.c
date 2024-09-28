@@ -18,6 +18,11 @@ typedef BignumInt *Bignum;
 
 #include "ssh.h"
 
+// Portable random byte function
+unsigned char random_byte() {
+    return (unsigned char)(rand() % 256); // Return a random byte (0-255)
+}
+
 BignumInt bnZero[1] = { 0 };
 BignumInt bnOne[2] = { 1, 1 };
 BignumInt bnTen[2] = { 1, 10 };

@@ -35,6 +35,8 @@ static struct random_timer_context { int dummy; } random_timer_ctx;
 static prng *global_prng;
 static unsigned long next_noise_collection;
 
+#ifndef RANDOM_ADD_NOISE
+#define RANDOM_ADD_NOISE 1
 void random_add_noise(NoiseSourceId source, const void *noise, int length)
 {
     if (!random_active)
@@ -42,6 +44,7 @@ void random_add_noise(NoiseSourceId source, const void *noise, int length)
 
     prng_add_entropy(global_prng, source, make_ptrlen(noise, length));
 }
+#endif
 
 static void random_timer(void *ctx, unsigned long now)
 {

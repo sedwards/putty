@@ -62,11 +62,18 @@ static void feed_keypress_prng(void *data, int size)
 {
     put_data(keypress_prng, data, size);
 }
+
+#ifndef __APPLE__
+#ifndef RANDOM_ADD_NOISE
+#define RANDOM_ADD_NOISE 1
 void random_add_noise(NoiseSourceId source, const void *noise, int length)
 {
     if (keypress_prng)
         prng_add_entropy(keypress_prng, source, make_ptrlen(noise, length));
 }
+#endif
+#endif
+
 static void setup_keypress_prng(void)
 {
     keypress_prng = prng_new(&ssh_sha256);
@@ -564,7 +571,9 @@ static bool setup_gtk(const char *display)
     return ret;
 }
 
+#ifndef __APPLE__
 const bool buildinfo_gtk_relevant = true;
+#endif
 
 char *gtk_askpass_main(const char *display, const char *wintitle,
                        const char *prompt, bool *success)

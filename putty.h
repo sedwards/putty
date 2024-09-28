@@ -10,6 +10,8 @@
 #include "misc.h"
 #include "marshal.h"
 
+#define appname "Putty"
+
 /*
  * We express various time intervals in unsigned long minutes, but may need to
  * clip some values so that the resulting number of ticks does not overflow an
@@ -587,7 +589,7 @@ extern const int be_default_protocol;
  * Name of this particular application, for use in the config box
  * and other pieces of text.
  */
-extern const char *const appname;
+//extern const char *const appname;
 
 /*
  * Mechanism for getting text strings such as usernames and passwords

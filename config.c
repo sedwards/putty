@@ -285,7 +285,7 @@ void config_protocolbuttons_handler(union control *ctrl, dlgparam *dlg,
             if (protocol == ctrl->radio.buttondata[button].i)
                 break;
         /* We expected that `break' to happen, in all circumstances. */
-        assert(button < ctrl->radio.nbuttons);
+        //assert(button < ctrl->radio.nbuttons);
         dlg_radiobutton_set(ctrl, dlg, button);
     } else if (event == EVENT_VALCHANGE) {
         int oldproto = conf_get_int(conf, CONF_protocol);

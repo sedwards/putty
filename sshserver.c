@@ -502,8 +502,10 @@ static void server_got_ssh_version(struct ssh_version_receiver *rcv,
         connection_layer = ssh2_connection_new(
             &srv->ssh, NULL, false, srv->conf,
             ssh_verstring_get_local(old_bpp), &srv->cl);
+#ifndef __APPLE__
         ssh2connection_server_configure(connection_layer,
                                         srv->sftpserver_vt, srv->ssc);
+#endif
         server_connect_ppl(srv, connection_layer);
 
         srv->base_layer = connection_layer;
@@ -516,8 +518,10 @@ static void server_got_ssh_version(struct ssh_version_receiver *rcv,
         connection_layer = ssh2_connection_new(
             &srv->ssh, NULL, false, srv->conf,
             ssh_verstring_get_local(old_bpp), &srv->cl);
+#ifndef __APPLE__
         ssh2connection_server_configure(connection_layer,
                                         srv->sftpserver_vt, srv->ssc);
+#endif
         server_connect_ppl(srv, connection_layer);
 
         if (conf_get_bool(srv->conf, CONF_ssh_no_userauth)) {
@@ -555,8 +559,11 @@ static void server_got_ssh_version(struct ssh_version_receiver *rcv,
         ssh1connection_server_configure(connection_layer, srv->ssc);
         server_connect_ppl(srv, connection_layer);
 
+#ifndef __APPLE__
         srv->base_layer = ssh1_login_server_new(
             connection_layer, srv->hostkey1, srv->authpolicy, srv->ssc);
+#endif /* __APPLE__ */
+
         server_connect_ppl(srv, srv->base_layer);
     }
 

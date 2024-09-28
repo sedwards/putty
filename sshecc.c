@@ -39,6 +39,13 @@
 #include "mpint.h"
 #include "ecc.h"
 
+int ssh_shake256_114bytes(const unsigned char *input, size_t input_len, unsigned char *output) {
+    int ret = 1;
+
+    printf("ssh_shake256_114bytes is unimplemented on this platform\n");;
+    return ret;
+}
+
 /* ----------------------------------------------------------------------
  * Elliptic curve definitions
  */
