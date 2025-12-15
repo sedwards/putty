@@ -144,3 +144,7 @@ Makefile
 /windows/*.msi
 /windows/*.wixobj
 /windows/*.wixpdb
+*.dmg
+autom4te.cache
+ar-lib
+build_macos
