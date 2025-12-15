@@ -49,6 +49,116 @@ Selecting GTK version (1.2, 2.0, or 3.0):
 ./configure --with-gtk=3
 ```
 
+### Building on macOS with jhbuild and GTK3
+
+PuTTY can be built natively on macOS using jhbuild to manage GTK3 and dependencies, avoiding Homebrew library dependencies.
+
+#### Prerequisites
+
+1. **Xcode Command Line Tools**:
+   ```bash
+   xcode-select --install
+   ```
+
+2. **jhbuild Setup**: Follow the jhbuild installation and configuration as documented in your jhbuild installation directory.
+
+#### Build Steps
+
+1. **Generate configure script** (if not present):
+   ```bash
+   cd ~/source/jhbuild/checkout/putty
+   ./mkauto.sh
+   ```
+
+2. **Configure with GTK3 and Quartz backend**:
+   ```bash
+   ./configure --with-gtk=3 --with-quartz \
+     PKG_CONFIG_PATH=$HOME/source/jhbuild/install/lib/pkgconfig \
+     CC=/usr/bin/clang \
+     CFLAGS="-I$HOME/source/jhbuild/install/include" \
+     LDFLAGS="-L$HOME/source/jhbuild/install/lib"
+   ```
+
+3. **Build**:
+   ```bash
+   make
+   ```
+
+#### Installed Programs
+
+After building, the following programs will be available in the current directory:
+
+**GTK GUI Applications:**
+- `putty` - SSH, Telnet, and serial terminal with GUI
+- `pterm` - Standalone terminal emulator (no network protocols)
+
+**Command-line Tools:**
+- `plink` - Command-line connection tool (SSH/Telnet/Rlogin/Serial)
+- `pscp` - SCP client for file transfer
+- `psftp` - SFTP client
+- `puttygen` - Key generation tool
+- `pageant` - SSH authentication agent (Unix version)
+
+#### Creating macOS Application Bundles
+
+PuTTY includes support for creating macOS application bundles with GTK-Quartz integration:
+
+1. The bundle templates are in `unix/*.bundle` and `unix/*.plist`
+2. Build with `--with-quartz` flag to enable macOS-specific features
+3. The bundles integrate properly with macOS using the Quartz GTK backend
+
+For app bundle creation, you can use `gtk-mac-bundler` (available through jhbuild):
+```bash
+# Install gtk-mac-bundler if not already installed
+jhbuild build gtk-mac-integration
+
+# Create bundle (requires gtk-mac-bundler configuration)
+gtk-mac-bundler unix/putty.bundle
+```
+
+#### macOS-Specific Features
+
+When built with `--with-quartz`:
+- **Native macOS Menus**: Uses macOS menu bar instead of window menu
+- **Quartz Rendering**: Better font rendering and integration
+- **macOS Services**: Integration with macOS Services menu
+- **Keyboard Shortcuts**: macOS-style keyboard shortcuts (Cmd instead of Ctrl where appropriate)
+
+#### Troubleshooting macOS Builds
+
+**Missing PKG_CONFIG_PATH:**
+```bash
+export PKG_CONFIG_PATH=$HOME/source/jhbuild/install/lib/pkgconfig
+```
+
+**GTK not found:**
+Ensure GTK3 is built in jhbuild:
+```bash
+jhbuild build gtk+-3.0
+```
+
+**Quartz backend errors:**
+Make sure you're using GTK built with Quartz support (default in jhbuild for macOS).
+
+**Build fails with linker errors:**
+Ensure jhbuild environment is set up:
+```bash
+jhbuild shell
+# Then build putty inside the jhbuild shell
+```
+
+#### Running from jhbuild Environment
+
+To run PuTTY tools with the correct library paths:
+```bash
+# Option 1: Use jhbuild run
+jhbuild run ./putty
+
+# Option 2: Set up environment manually
+export DYLD_LIBRARY_PATH=$HOME/source/jhbuild/install/lib
+./putty
+```
+
 ### Building on Windows
 
 Change to the `windows` subdirectory for all builds.
@@ -346,3 +456,43 @@ This generates Windows Help files, Unix man pages, HTML, and other formats.
 This is a Git repository. The main branch is `master`.
 
 When making commits, follow the existing commit message style (check `git log` for examples).
+
+## Quick Reference: macOS/jhbuild Build
+
+For those working with jhbuild on macOS, here's the quick workflow:
+
+```bash
+# 1. Navigate to putty directory
+cd ~/source/jhbuild/checkout/putty
+
+# 2. Generate configure if needed
+./mkauto.sh
+
+# 3. Configure for macOS with GTK3
+./configure --with-gtk=3 --with-quartz \
+  PKG_CONFIG_PATH=$HOME/source/jhbuild/install/lib/pkgconfig
+
+# 4. Build
+make
+
+# 5. Run (with jhbuild environment)
+jhbuild run ./putty
+```
+
+### Common macOS/GTK Issues
+
+Based on experience with similar GTK applications on macOS:
+
+1. **Threading and GUI**: GTK GUI operations must happen on the main thread. If implementing features that create dialogs or windows from background threads, use `g_idle_add()` to schedule GUI operations on the main thread.
+
+2. **Signal Handlers**: When implementing signal handlers (SIGINT, etc.), ensure they don't call GTK functions directly. Use the same pattern as above: queue work for the main thread.
+
+3. **App Bundle Resources**: If creating relocatable app bundles, consider using CoreFoundation APIs to detect the bundle location and adjust resource paths accordingly (see gFTP implementation for reference).
+
+4. **Deprecated APIs**: Avoid `GDK_THREADS_ENTER/LEAVE` macros - they're deprecated in GTK3 and don't work reliably on macOS.
+
+### Performance Considerations
+
+- First launch may be slower while dynamic linker resolves library paths
+- Subsequent launches should be faster
+- Consider using `gtk-mac-bundler` for distribution to bundle all dependencies
