@@ -89,6 +89,9 @@ cmake .. \
     -DCMAKE_C_COMPILER=/usr/bin/clang \
     -DCMAKE_C_FLAGS="-I$JHBUILD_PREFIX/include" \
     -DCMAKE_EXE_LINKER_FLAGS="-L$JHBUILD_PREFIX/lib" \
+    -DX11_X11_LIB="" \
+    -DX11_X11_INCLUDE_PATH="" \
+    -DCMAKE_DISABLE_FIND_PACKAGE_X11=TRUE \
     || {
     echo -e "${RED}CMake configuration failed${NC}"
     exit 1
@@ -161,6 +164,10 @@ for app in "${GUI_APPS[@]}"; do
     }
 
     echo -e "${GREEN}  ✓ $APP_NAME.app created${NC}"
+
+    # Fix missing transitive dependencies
+    echo "  Fixing transitive dependencies..."
+    "$SCRIPT_DIR/fix_bundle_deps.sh" "$DEST_DIR/$APP_NAME.app" > /dev/null 2>&1 || true
 done
 
 echo ""
